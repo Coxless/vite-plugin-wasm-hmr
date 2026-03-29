@@ -18,7 +18,7 @@ export function createBuilder(opts: ResolvedOptions, logger: Logger) {
 				"build",
 				opts.crateDir,
 				"--target",
-				opts.target,
+				"bundler",
 				"--out-dir",
 				`${opts.outDir}-staging`,
 				...opts.wasmPackArgs,

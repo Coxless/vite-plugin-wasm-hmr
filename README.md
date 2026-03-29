@@ -38,28 +38,12 @@ export default defineConfig({
 
 ### 2. Use WASM in your code
 
-**Vanilla JS/TS** — just import. HMR works automatically:
+Just import. HMR works automatically:
 
 ```ts
 import { greet } from "my-wasm-pkg";
 
 greet("world");
-```
-
-**React** — use the provided hook for async loading:
-
-```tsx
-import { useWasm } from "vite-plugin-wasm-hmr/react";
-
-const loadWasm = () => import("my-wasm-pkg");
-
-export function App() {
-  const { wasm, loading, error } = useWasm(loadWasm);
-
-  if (loading) return <p>Loading WASM...</p>;
-  if (error) return <p>Error: {error.message}</p>;
-  return <p>Result: {wasm!.add(1, 2)}</p>;
-}
 ```
 
 ### 3. Run dev server
@@ -81,7 +65,6 @@ That's it. Edit your `.rs` files and see changes reflected in the browser withou
   -> Invalidate WASM modules in Vite's module graph
   -> server.reloadModule() triggers HMR
   -> import.meta.hot.accept() (auto-injected) picks up new module
-  -> React Refresh re-renders components
 ```
 
 ## Options
@@ -91,20 +74,14 @@ wasmHmr({
   // Required: path to Rust crate, relative to Vite root
   crate: "../my-crate",
 
-  // wasm-pack --target (default: "bundler")
-  target: "bundler",
-
   // Output directory name within the crate (default: "pkg")
   outDir: "pkg",
 
   // Debounce interval in ms (default: 300)
   debounceMs: 300,
 
-  // Extra wasm-pack args (default: ["--dev"] in dev, [] in build)
+  // Extra wasm-pack args (default: ["--dev"])
   wasmPackArgs: ["--dev"],
-
-  // Watch patterns relative to crate dir (default: ["src/**/*.rs", "Cargo.toml"])
-  watchPatterns: ["src/**/*.rs", "Cargo.toml"],
 
   // Package name for import resolution (default: auto-detected from pkg/package.json)
   packageName: "my-wasm-pkg",
@@ -145,9 +122,8 @@ export default defineConfig({
 
 ## Requirements
 
-- Vite 5, 6, 7, or 8
+- Vite 6, 7, or 8
 - wasm-pack
-- React 18 or 19 (optional, only for `useWasm` hook)
 
 ## License
 

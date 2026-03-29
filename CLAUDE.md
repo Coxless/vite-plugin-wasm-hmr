@@ -14,19 +14,17 @@ A Vite plugin that enables hot module reload for WebAssembly modules built with 
 
 ## Architecture
 
-The plugin has four modules under `src/`:
+The plugin has three modules under `src/`:
 
 - **plugin.ts** — Core Vite plugin. Uses Node.js `fs.watch()` (not Vite's watcher) to detect changes in the Rust crate's `src/` and `Cargo.toml`. Debounces file events, triggers rebuilds, and sends HMR updates via Vite's module graph. Suppresses Vite's default HMR for `pkg/` files since the plugin handles that itself.
 - **builder.ts** — Spawns `wasm-pack build`, manages build queueing (prevents concurrent builds, auto-rebuilds if changes arrive mid-build). Uses a staging directory (`pkg-staging/`) then copies to `pkg/`.
 - **options.ts** — Resolves user config to internal `ResolvedOptions`. Auto-detects the WASM package name from `pkg/package.json`.
-- **react.ts** — Optional `useWasm<T>()` hook for ergonomic async WASM loading in React.
 
 **Key design decision:** `fs.watch()` is used directly because Vite's built-in watcher (chokidar) does not detect changes outside the Vite project root, and the Rust crate is typically in a sibling directory.
 
 ## Package Exports
 
-Two entry points built by tsup:
+Single entry point built by tsup:
 - `.` → `src/index.ts` (plugin factory + types)
-- `./react` → `src/react.ts` (useWasm hook)
 
-Peer dependencies: `vite ^5–8`, `react ^18–19` (optional).
+Peer dependencies: `vite ^6–8`.

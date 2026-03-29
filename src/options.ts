@@ -4,16 +4,12 @@ import { join, resolve } from "node:path";
 export interface WasmHmrOptions {
 	/** Path to the Rust crate, relative to Vite root. Required. */
 	crate: string;
-	/** wasm-pack --target value. Default: "bundler" */
-	target?: "bundler" | "web";
 	/** Output directory name within the crate. Default: "pkg" */
 	outDir?: string;
 	/** Debounce interval in ms. Default: 300 */
 	debounceMs?: number;
-	/** Extra args passed to wasm-pack build. Default: ["--dev"] in serve mode */
+	/** Extra args passed to wasm-pack build. Default: ["--dev"] */
 	wasmPackArgs?: string[];
-	/** Glob patterns to watch, relative to crate dir. Defaults to .rs files and Cargo.toml */
-	watchPatterns?: string[];
 	/** The package name used in import statements. Auto-detected from pkg/package.json if omitted. */
 	packageName?: string;
 	/** Whether to run wasm-pack build when the dev server starts. Default: true */
@@ -22,13 +18,11 @@ export interface WasmHmrOptions {
 
 export interface ResolvedOptions {
 	crateDir: string;
-	target: "bundler" | "web";
 	outDir: string;
 	pkgDir: string;
 	stagingDir: string;
 	debounceMs: number;
 	wasmPackArgs: string[];
-	watchPatterns: string[];
 	packageName: string;
 	entryFileName: string;
 	buildOnStart: boolean;
@@ -37,7 +31,6 @@ export interface ResolvedOptions {
 export function resolveOptions(
 	raw: WasmHmrOptions,
 	viteRoot: string,
-	isServe: boolean,
 ): ResolvedOptions {
 	const crateDir = resolve(viteRoot, raw.crate);
 	const outDir = raw.outDir ?? "pkg";
@@ -49,13 +42,11 @@ export function resolveOptions(
 
 	return {
 		crateDir,
-		target: raw.target ?? "bundler",
 		outDir,
 		pkgDir,
 		stagingDir,
 		debounceMs: raw.debounceMs ?? 300,
-		wasmPackArgs: raw.wasmPackArgs ?? (isServe ? ["--dev"] : []),
-		watchPatterns: raw.watchPatterns ?? ["src/**/*.rs", "Cargo.toml"],
+		wasmPackArgs: raw.wasmPackArgs ?? ["--dev"],
 		packageName,
 		entryFileName,
 		buildOnStart: raw.buildOnStart ?? true,

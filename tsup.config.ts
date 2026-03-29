@@ -1,9 +1,9 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-	entry: ["src/index.ts", "src/react.ts"],
+	entry: ["src/index.ts"],
 	format: ["esm"],
 	dts: true,
 	clean: true,
-	external: ["vite", "react"],
+	external: ["vite"],
 });

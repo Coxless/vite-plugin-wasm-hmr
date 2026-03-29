@@ -10,14 +10,12 @@ import {
 
 export function wasmHmr(rawOptions: WasmHmrOptions): Plugin {
 	let opts: ResolvedOptions;
-	let isServe = false;
 
 	return {
 		name: "wasm-hmr",
 
 		configResolved(config) {
-			isServe = config.command === "serve";
-			opts = resolveOptions(rawOptions, config.root, isServe);
+			opts = resolveOptions(rawOptions, config.root);
 		},
 
 		configureServer(server) {
