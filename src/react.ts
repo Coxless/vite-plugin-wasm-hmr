@@ -19,26 +19,28 @@ import { useEffect, useState } from "react";
  * }
  * ```
  */
-export function useWasm<T>(
-  importFn: () => Promise<T>,
-): { wasm: T | null; error: Error | null; loading: boolean } {
-  const [wasm, setWasm] = useState<T | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+export function useWasm<T>(importFn: () => Promise<T>): {
+	wasm: T | null;
+	error: Error | null;
+	loading: boolean;
+} {
+	const [wasm, setWasm] = useState<T | null>(null);
+	const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    importFn().then(
-      (mod) => {
-        if (!cancelled) setWasm(mod);
-      },
-      (err) => {
-        if (!cancelled) setError(err);
-      },
-    );
-    return () => {
-      cancelled = true;
-    };
-  }, [importFn]);
+	useEffect(() => {
+		let cancelled = false;
+		importFn().then(
+			(mod) => {
+				if (!cancelled) setWasm(mod);
+			},
+			(err) => {
+				if (!cancelled) setError(err);
+			},
+		);
+		return () => {
+			cancelled = true;
+		};
+	}, [importFn]);
 
-  return { wasm, error, loading: !wasm && !error };
+	return { wasm, error, loading: !wasm && !error };
 }
