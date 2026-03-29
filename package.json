@@ -1,8 +1,8 @@
 {
-	"name": "vite-plugin-wasm-hotreload",
+	"name": "vite-plugin-wasm-hmr",
 	"version": "0.1.0",
 	"type": "module",
-	"description": "Vite plugin for wasm-pack hot module reload",
+	"description": "Vite plugin for wasm-pack HMR",
 	"license": "MIT",
 	"exports": {
 		".": {

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-export interface WasmHotReloadOptions {
+export interface WasmHmrOptions {
 	/** Path to the Rust crate, relative to Vite root. Required. */
 	crate: string;
 	/** wasm-pack --target value. Default: "bundler" */
@@ -35,7 +35,7 @@ export interface ResolvedOptions {
 }
 
 export function resolveOptions(
-	raw: WasmHotReloadOptions,
+	raw: WasmHmrOptions,
 	viteRoot: string,
 	isServe: boolean,
 ): ResolvedOptions {

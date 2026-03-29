@@ -1,11 +1,11 @@
-# vite-plugin-wasm-hotreload
+# vite-plugin-wasm-hmr
 
 Vite plugin that watches Rust source files, rebuilds with wasm-pack, and triggers HMR — all within the Vite dev server. No separate watcher process, no sentinel files.
 
 ## Install
 
 ```bash
-npm install -D vite-plugin-wasm-hotreload
+npm install -D vite-plugin-wasm-hmr
 ```
 
 You also need [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/) and [vite-plugin-wasm](https://github.com/nicolo-ribaudo/vite-plugin-wasm):
@@ -22,14 +22,14 @@ cargo install wasm-pack
 ```ts
 import react from "@vitejs/plugin-react";
 import wasm from "vite-plugin-wasm";
-import { wasmHotReload } from "vite-plugin-wasm-hotreload";
+import { wasmHmr } from "vite-plugin-wasm-hmr";
 import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
     react(),
     wasm(),
-    wasmHotReload({ crate: "../wasm" }), // path to your Rust crate
+    wasmHmr({ crate: "../wasm" }), // path to your Rust crate
   ],
 });
 ```
@@ -49,7 +49,7 @@ greet("world");
 **React** — use the provided hook for async loading:
 
 ```tsx
-import { useWasm } from "vite-plugin-wasm-hotreload/react";
+import { useWasm } from "vite-plugin-wasm-hmr/react";
 
 const loadWasm = () => import("my-wasm-pkg");
 
@@ -87,7 +87,7 @@ That's it. Edit your `.rs` files and see changes reflected in the browser withou
 ## Options
 
 ```ts
-wasmHotReload({
+wasmHmr({
   // Required: path to Rust crate, relative to Vite root
   crate: "../my-crate",
 

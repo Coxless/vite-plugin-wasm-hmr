@@ -1,2 +1,2 @@
-export type { WasmHotReloadOptions } from "./options.js";
-export { wasmHotReload } from "./plugin.js";
+export type { WasmHmrOptions } from "./options.js";
+export { wasmHmr } from "./plugin.js";

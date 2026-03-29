@@ -41,14 +41,14 @@ export function createBuilder(opts: ResolvedOptions, logger: Logger) {
 		}
 
 		building = true;
-		logger.info("[wasm-hotreload] Building...", { timestamp: true });
+		logger.info("[wasm-hmr] Building...", { timestamp: true });
 
 		let result = await runWasmPack();
 
 		// Process pending rebuild if another change arrived during build
 		while (pendingRebuild) {
 			pendingRebuild = false;
-			logger.info("[wasm-hotreload] Rebuilding (queued change)...", {
+			logger.info("[wasm-hmr] Rebuilding (queued change)...", {
 				timestamp: true,
 			});
 			result = await runWasmPack();
@@ -57,11 +57,11 @@ export function createBuilder(opts: ResolvedOptions, logger: Logger) {
 		building = false;
 
 		if (result.ok) {
-			logger.info(`[wasm-hotreload] Build complete (${result.durationMs}ms)`, {
+			logger.info(`[wasm-hmr] Build complete (${result.durationMs}ms)`, {
 				timestamp: true,
 			});
 		} else {
-			logger.error(`[wasm-hotreload] Build failed: ${result.error.message}`, {
+			logger.error(`[wasm-hmr] Build failed: ${result.error.message}`, {
 				timestamp: true,
 			});
 		}

@@ -5,15 +5,15 @@ import { createBuilder } from "./builder.js";
 import {
 	type ResolvedOptions,
 	resolveOptions,
-	type WasmHotReloadOptions,
+	type WasmHmrOptions,
 } from "./options.js";
 
-export function wasmHotReload(rawOptions: WasmHotReloadOptions): Plugin {
+export function wasmHmr(rawOptions: WasmHmrOptions): Plugin {
 	let opts: ResolvedOptions;
 	let isServe = false;
 
 	return {
-		name: "wasm-hotreload",
+		name: "wasm-hmr",
 
 		configResolved(config) {
 			isServe = config.command === "serve";
@@ -31,7 +31,7 @@ export function wasmHotReload(rawOptions: WasmHotReloadOptions): Plugin {
 				const files = [...changedFiles];
 				changedFiles.clear();
 				for (const f of files) {
-					logger.info(`[wasm-hotreload] Change detected: ${f}`, {
+					logger.info(`[wasm-hmr] Change detected: ${f}`, {
 						timestamp: true,
 					});
 				}
@@ -43,7 +43,7 @@ export function wasmHotReload(rawOptions: WasmHotReloadOptions): Plugin {
 						err: {
 							message: result.error.message,
 							stack: result.error.stack ?? "",
-							plugin: "wasm-hotreload",
+							plugin: "wasm-hmr",
 							id: opts.crateDir,
 						},
 					});
