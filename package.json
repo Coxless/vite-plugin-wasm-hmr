@@ -4,6 +4,10 @@
 	"type": "module",
 	"description": "Vite plugin that watches Rust files, rebuilds with wasm-pack, and triggers HMR. Companion to vite-plugin-wasm.",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Coxless/vite-plugin-wasm-hmr"
+	},
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
