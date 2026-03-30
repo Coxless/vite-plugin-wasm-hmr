@@ -109,17 +109,6 @@ packages:
 { "dependencies": { "my-wasm-pkg": "workspace:*" } }
 ```
 
-**Vite alias:**
-
-```ts
-// vite.config.ts
-export default defineConfig({
-  resolve: {
-    alias: { "my-wasm-pkg": path.resolve(__dirname, "../wasm/pkg") },
-  },
-});
-```
-
 ## Requirements
 
 - Vite 6, 7, or 8
