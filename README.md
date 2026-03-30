@@ -57,15 +57,30 @@ That's it. Edit your `.rs` files and see changes reflected in the browser withou
 ## How It Works
 
 ```
-*.rs saved
-  -> Vite's file watcher detects change
+*.rs or Cargo.toml saved
+  -> Node.js fs.watch() detects change
   -> Debounce (300ms)
-  -> wasm-pack build --dev -> pkg-staging/
+  -> wasm-pack build --target bundler --dev -> pkg-staging/
   -> Copy pkg-staging/ -> pkg/
   -> Invalidate WASM modules in Vite's module graph
   -> server.reloadModule() triggers HMR
   -> import.meta.hot.accept() (auto-injected) picks up new module
 ```
+
+### Change Detection
+
+The plugin uses Node.js `fs.watch()` directly instead of Vite's built-in watcher (chokidar), because the Rust crate typically lives outside the Vite project root and chokidar only watches within it.
+
+**Watched paths:**
+
+| Path | Filter | Notes |
+|---|---|---|
+| `<crate>/src/` | `*.rs` only (recursive) | All subdirectories are included |
+| `<crate>/Cargo.toml` | — | Triggers rebuild on dependency/feature changes |
+
+Changes to other files (e.g. `build.rs` at the crate root, non-`.rs` files in `src/`) are **not** detected.
+
+**Build queuing:** If a new change arrives while `wasm-pack` is already running, the rebuild is queued and runs once the current build finishes. Only one queued rebuild is retained — rapid changes during a long build collapse into a single follow-up build.
 
 ## Options
 
@@ -80,7 +95,7 @@ wasmHmr({
   // Debounce interval in ms (default: 300)
   debounceMs: 300,
 
-  // Extra wasm-pack args (default: ["--dev"])
+  // Extra args appended to: wasm-pack build --target bundler (default: ["--dev"])
   wasmPackArgs: ["--dev"],
 
   // Package name for import resolution (default: auto-detected from pkg/package.json)
