@@ -1,5 +1,5 @@
 import { watch } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import type { Plugin, ViteDevServer } from "vite";
 import { createBuilder } from "./builder.js";
 import {
@@ -13,6 +13,16 @@ export function wasmHmr(rawOptions: WasmHmrOptions): Plugin {
 
 	return {
 		name: "wasm-hmr",
+
+		config(userConfig) {
+			const root = resolve(userConfig.root ?? process.cwd());
+			opts = resolveOptions(rawOptions, root);
+			return {
+				optimizeDeps: {
+					exclude: [opts.packageName],
+				},
+			};
+		},
 
 		configResolved(config) {
 			opts = resolveOptions(rawOptions, config.root);
@@ -78,8 +88,9 @@ export function wasmHmr(rawOptions: WasmHmrOptions): Plugin {
 			}
 		},
 
-		// Suppress Vite's default HMR for pkg/ files.
-		// We handle HMR ourselves via configureServer after wasm-pack build.
+		// Suppress Vite's native HMR for pkg/ files to prevent duplicate
+		// updates (one per changed file). We trigger a single coordinated
+		// HMR update in triggerHmr after the build completes.
 		hotUpdate({ file }) {
 			if (file.startsWith(opts.pkgDir)) {
 				return [];
@@ -89,16 +100,23 @@ export function wasmHmr(rawOptions: WasmHmrOptions): Plugin {
 }
 
 function triggerHmr(server: ViteDevServer, opts: ResolvedOptions) {
-	// Invalidate all modules from pkg/
+	const timestamp = Date.now();
+
+	// Invalidate with isHmr=true so lastHMRTimestamp is set,
+	// enabling client-side URL cache busting on re-import.
 	for (const [file, mods] of server.moduleGraph.fileToModulesMap) {
 		if (file.startsWith(opts.pkgDir)) {
 			for (const mod of mods) {
-				server.moduleGraph.invalidateModule(mod);
+				server.moduleGraph.invalidateModule(
+					mod,
+					undefined,
+					timestamp,
+					true,
+				);
 			}
 		}
 	}
 
-	// Find the entry module and trigger HMR reload
 	const entryFile = join(opts.pkgDir, opts.entryFileName);
 	const entryMods = server.moduleGraph.getModulesByFile(entryFile);
 	if (entryMods) {
