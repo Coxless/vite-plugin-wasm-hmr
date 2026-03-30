@@ -107,12 +107,7 @@ function triggerHmr(server: ViteDevServer, opts: ResolvedOptions) {
 	for (const [file, mods] of server.moduleGraph.fileToModulesMap) {
 		if (file.startsWith(opts.pkgDir)) {
 			for (const mod of mods) {
-				server.moduleGraph.invalidateModule(
-					mod,
-					undefined,
-					timestamp,
-					true,
-				);
+				server.moduleGraph.invalidateModule(mod, undefined, timestamp, true);
 			}
 		}
 	}
