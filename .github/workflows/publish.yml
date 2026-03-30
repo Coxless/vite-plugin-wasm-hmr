@@ -15,9 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: jdx/mise-action@v4
+      - uses: actions/setup-node@v6
         with:
-          install: true
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: corepack enable
 
       - run: pnpm install --frozen-lockfile
 
